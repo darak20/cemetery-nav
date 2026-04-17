@@ -1,0 +1,833 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary: #0a2f44;
+    --primary-dark: #051e2c;
+    --primary-light: #1e4a6b;
+    --accent: #e67e22;
+    --accent-light: #f39c12;
+    --success: #2ecc71;
+    --gray-50: #f8fafc;
+    --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0;
+    --gray-300: #cbd5e1;
+    --gray-400: #94a3b8;
+    --gray-600: #475569;
+    --gray-800: #1e293b;
+    --white: #ffffff;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
+    background: var(--gray-50);
+    height: 100vh;
+    overflow: hidden;
+}
+
+.app {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ========== ШАПКА ========== */
+.header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    padding: 0 16px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    box-shadow: var(--shadow-lg);
+    z-index: 20;
+}
+
+.header-content {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-icon {
+    width: 36px;
+    height: 36px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.logo-text h1 {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.logo-text span {
+    font-size: 0.65rem;
+    opacity: 0.8;
+}
+
+.menu-btn {
+    display: none;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+/* ========== ОСНОВНОЙ КОНТЕНТ ========== */
+.main {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+}
+
+/* ========== САЙДБАР ========== */
+.sidebar {
+    width: 320px;
+    background: var(--white);
+    border-right: 1px solid var(--gray-200);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 15;
+}
+
+.sidebar-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 16px;
+    gap: 16px;
+}
+
+.search-section {
+    position: sticky;
+    top: 0;
+    background: var(--white);
+    z-index: 10;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    background: var(--gray-100);
+    border-radius: 12px;
+    padding: 10px 14px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+.search-box:focus-within {
+    background: var(--white);
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(30, 74, 107, 0.1);
+}
+
+.search-box i {
+    color: var(--gray-400);
+    margin-right: 10px;
+    font-size: 0.9rem;
+}
+
+.search-box input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 0.85rem;
+    outline: none;
+    color: var(--gray-800);
+}
+
+.search-box input::placeholder {
+    color: var(--gray-400);
+}
+
+.route-categories {
+    background: linear-gradient(135deg, #fef9e6 0%, #fff7e6 100%);
+    border-radius: 16px;
+    padding: 14px;
+    border: 1px solid #ffe6b3;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--gray-600);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.section-title i {
+    color: var(--accent);
+    font-size: 0.85rem;
+}
+
+.hide-markers-btn {
+    width: 100%;
+    padding: 10px;
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 10px;
+    transition: all 0.2s;
+}
+
+.hide-markers-btn:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+}
+
+.categories-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.category-btn {
+    padding: 6px 14px;
+    background: white;
+    border: 1px solid #ffe6b3;
+    border-radius: 30px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--primary);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.category-btn:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+}
+
+.objects-list {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.list-container {
+    flex: 1;
+    overflow-y: auto;
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 250px;
+}
+
+.object-item {
+    padding: 10px 12px;
+    background: var(--gray-50);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid var(--gray-200);
+}
+
+.object-item:hover {
+    background: var(--gray-100);
+    transform: translateX(2px);
+}
+
+.object-name {
+    font-weight: 600;
+    color: var(--gray-800);
+    font-size: 0.8rem;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.object-category {
+    font-size: 0.65rem;
+    color: var(--gray-500);
+    background: var(--gray-200);
+    padding: 2px 6px;
+    border-radius: 16px;
+    display: inline-block;
+}
+
+.stats {
+    background: var(--gray-100);
+    border-radius: 12px;
+    padding: 10px 12px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: var(--gray-600);
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* ========== КАРТА ========== */
+.map-area {
+    flex: 1;
+    position: relative;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+}
+
+/* ========== ПАНЕЛЬ ИНФОРМАЦИИ ========== */
+.info-panel {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    z-index: 30;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.info-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+}
+
+.info-panel-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.info-panel-close {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.info-panel-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.info-panel-content {
+    padding: 16px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.info-placeholder {
+    text-align: center;
+    color: var(--gray-400);
+    padding: 30px 20px;
+}
+
+.info-placeholder i {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    display: block;
+}
+
+/* Карточка объекта */
+.object-card {
+    animation: fadeIn 0.3s ease;
+}
+
+.object-card h3 {
+    margin: 0 0 8px 0;
+    color: var(--primary);
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.object-category-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.65rem;
+    margin-bottom: 12px;
+}
+
+.object-photo {
+    width: 100%;
+    max-height: 180px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    background: var(--gray-100);
+}
+
+.object-description {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--gray-600);
+    margin-bottom: 16px;
+}
+
+.object-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.object-actions button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.object-actions .btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.object-actions .btn-primary:hover {
+    background: var(--primary-light);
+}
+
+.object-actions .btn-secondary {
+    background: var(--gray-200);
+    color: var(--gray-600);
+}
+
+/* Категория в панели */
+.category-info h3 {
+    margin: 0 0 8px 0;
+    color: var(--primary);
+    font-size: 0.95rem;
+}
+
+.category-list {
+    max-height: 250px;
+    overflow-y: auto;
+    margin: 12px 0;
+}
+
+.category-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    border-bottom: 1px solid var(--gray-200);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.category-item:hover {
+    background: var(--gray-100);
+    border-radius: 10px;
+}
+
+.category-item-photo {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: var(--gray-200);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.category-item-name {
+    flex: 1;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--gray-800);
+}
+
+.category-item-icon {
+    color: var(--gray-400);
+    font-size: 0.8rem;
+}
+
+/* Маршрут */
+.route-info {
+    animation: fadeIn 0.3s ease;
+}
+
+.route-distance {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-align: center;
+    padding: 10px;
+    background: var(--gray-100);
+    border-radius: 14px;
+    margin-bottom: 12px;
+}
+
+.route-info p {
+    margin: 8px 0;
+    font-size: 0.85rem;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Кнопка локации */
+.locate-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+    background: var(--white);
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    transition: all 0.2s;
+}
+
+.locate-btn:hover {
+    transform: scale(1.05);
+}
+
+/* Мобильная панель */
+.mobile-toolbar {
+    display: none;
+    background: var(--white);
+    border-top: 1px solid var(--gray-200);
+    padding: 8px 12px;
+    justify-content: space-around;
+    gap: 6px;
+    z-index: 15;
+}
+
+.toolbar-btn {
+    flex: 1;
+    padding: 8px;
+    background: var(--gray-100);
+    border: none;
+    border-radius: 25px;
+    font-size: 0.65rem;
+    font-weight: 500;
+    color: var(--gray-600);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    transition: all 0.2s;
+}
+
+.toolbar-btn i {
+    font-size: 1rem;
+}
+
+.toolbar-btn:active {
+    transform: scale(0.96);
+}
+
+/* Приветственное модальное окно */
+.welcome-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.welcome-modal-content {
+    background: white;
+    border-radius: 24px;
+    max-width: 400px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.welcome-modal-header {
+    background: linear-gradient(135deg, #0a2f44 0%, #051e2c 100%);
+    color: white;
+    padding: 20px;
+    text-align: center;
+    border-radius: 24px 24px 0 0;
+}
+
+.welcome-modal-header i {
+    font-size: 2.5rem;
+    margin-bottom: 8px;
+}
+
+.welcome-modal-header h2 {
+    font-size: 1.3rem;
+}
+
+.welcome-modal-body {
+    padding: 20px;
+}
+
+.welcome-modal-body p {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #2c3e50;
+    margin-bottom: 16px;
+}
+
+.info-box {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    background: #f0f5f9;
+    border-radius: 14px;
+    margin-bottom: 12px;
+    align-items: flex-start;
+}
+
+.info-box i {
+    font-size: 1.2rem;
+    color: #e67e22;
+    min-width: 24px;
+    text-align: center;
+}
+
+.info-box strong {
+    color: #1a3a4c;
+}
+
+.info-box div {
+    flex: 1;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    color: #4a627a;
+}
+
+.welcome-modal-footer {
+    padding: 16px 20px;
+    display: flex;
+    gap: 10px;
+    border-top: 1px solid #e0e8ef;
+}
+
+.welcome-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #1a3a4c;
+    color: white;
+}
+
+.welcome-btn:hover {
+    background: #0f2a38;
+}
+
+.welcome-btn.secondary {
+    background: #e0e8ef;
+    color: #2c5a6e;
+}
+
+.welcome-btn.secondary:hover {
+    background: #d0dce5;
+}
+
+.loading-spinner {
+    text-align: center;
+    padding: 20px;
+    color: var(--gray-400);
+}
+
+.count-badge {
+    background: var(--gray-200);
+    padding: 2px 6px;
+    border-radius: 16px;
+    font-size: 0.65rem;
+    margin-left: auto;
+}
+
+#tempMessage {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-size: 0.75rem;
+    z-index: 1000;
+    white-space: nowrap;
+    pointer-events: none;
+    backdrop-filter: blur(8px);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .sidebar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 85%;
+        max-width: 300px;
+        z-index: 25;
+        transform: translateX(-100%);
+        box-shadow: var(--shadow-xl);
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    
+    .menu-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .mobile-toolbar {
+        display: flex;
+    }
+    
+    .info-panel {
+        left: 10px;
+        right: 10px;
+        bottom: 70px;
+    }
+    
+    .locate-btn {
+        bottom: 75px;
+        right: 15px;
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .object-actions button {
+        padding: 8px;
+        font-size: 0.75rem;
+    }
+}
+
+@media (min-width: 769px) {
+    .info-panel {
+        max-width: 380px;
+        right: auto;
+    }
+}
+
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--gray-100);
+    border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--gray-300);
+    border-radius: 2px;
+}
+
+/* Стили для меток - принудительное отображение */
+.ymaps-2-1-79-image-with-content {
+    display: block !important;
+    z-index: 1000 !important;
+}
+
+.ymaps-2-1-79-image-with-content div {
+    display: block !important;
+}
+
+.ymaps-2-1-79-ground-pane {
+    z-index: 0 !important;
+}
+
+.ymaps-2-1-79-copyrights-pane {
+    z-index: 100 !important;
+}
