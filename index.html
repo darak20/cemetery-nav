@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#0a2f44">
+    <title>Старое кладбище Таганрога | Навигатор</title>
+    
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=0ce233ce-0e03-480a-9920-6031254dba4e&lang=ru_RU" type="text/javascript"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+   <!-- ПРИВЕТСТВЕННОЕ МОДАЛЬНОЕ ОКНО -->
+<div id="welcomeModal" class="welcome-modal" style="display: flex; z-index: 10000; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center;">
+    <div class="welcome-modal-content" style="background: white; border-radius: 24px; max-width: 400px; width: 90%; margin: auto;">
+        <div class="welcome-modal-header" style="background: linear-gradient(135deg, #0a2f44 0%, #051e2c 100%); color: white; padding: 20px; text-align: center; border-radius: 24px 24px 0 0;">
+            <i class="fas fa-church" style="font-size: 2.5rem; margin-bottom: 8px;"></i>
+            <h2 style="margin: 0;">Добро пожаловать!</h2>
+        </div>
+        <div class="welcome-modal-body" style="padding: 20px;">
+            <p><strong>Старое кладбище Таганрога</strong> — исторический некрополь XIX века.</p>
+            <div class="info-box" style="display: flex; gap: 12px; padding: 12px; background: #f0f5f9; border-radius: 14px; margin-bottom: 12px;">
+                <i class="fas fa-map-marker-alt" style="color: #e67e22;"></i>
+                <div><strong>Адрес:</strong> г. Таганрог, ул. Лаппо, 1</div>
+            </div>
+            <div class="info-box" style="display: flex; gap: 12px; padding: 12px; background: #f0f5f9; border-radius: 14px; margin-bottom: 12px;">
+                <i class="fas fa-clock" style="color: #e67e22;"></i>
+                <div><strong>Режим работы:</strong> Круглосуточно</div>
+            </div>
+            <div class="info-box" style="display: flex; gap: 12px; padding: 12px; background: #f0f5f9; border-radius: 14px; margin-bottom: 12px;">
+                <i class="fas fa-route" style="color: #e67e22;"></i>
+                <div><strong>Как пользоваться:</strong><br>1. Выберите категорию или объект<br>2. Нажмите "Маршрут"<br>3. Кликните на метку для подробной информации</div>
+            </div>
+        </div>
+        <div class="welcome-modal-footer" style="padding: 16px 20px; display: flex; gap: 10px; border-top: 1px solid #e0e8ef;">
+            <button id="closeWelcomeModal" class="welcome-btn" style="flex: 1; padding: 10px; background: #1a3a4c; color: white; border: none; border-radius: 30px; cursor: pointer;">Начать навигацию</button>
+    
+        </div>
+    </div>
+</div>
+
+    <div class="app">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon"><i class="fas fa-church"></i></div>
+                    <div class="logo-text">
+                        <h1>Старое кладбище</h1>
+                        <span>Таганрог · XIX век</span>
+                    </div>
+                </div>
+                <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+            </div>
+        </header>
+
+        <div class="main">
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-content">
+                    <div class="search-section">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Поиск по названию...">
+                        </div>
+                    </div>
+
+                    <div class="route-categories">
+                        <div class="section-title"><i class="fas fa-route"></i><span>Маршруты</span></div>
+                        <div class="section-title" style="margin-top: 16px;"><i class="fas fa-tags"></i><span>Категории</span></div>
+                        <div class="categories-grid" id="categoriesGrid">
+                            <div class="loading-spinner"><i class="fas fa-spinner fa-pulse"></i> Загрузка...</div>
+                        </div>
+                        <button class="hide-markers-btn" id="hideAllMarkersBtn">
+                            <i class="fas fa-eye-slash"></i> Скрыть все метки
+                        </button>
+                    </div>
+
+                    <div class="objects-list">
+                        <div class="section-title"><i class="fas fa-landmark"></i><span>Объекты наследия</span><span class="count-badge" id="objectsCount">0</span></div>
+                        <div class="list-container" id="objectsList"><div class="loading-spinner">Загрузка...</div></div>
+                    </div>
+
+                    <div class="stats">
+                        <div class="stat-item"><i class="fas fa-map-marker-alt"></i><span id="locationStatus">Определение...</span></div>
+                        <div class="stat-item"><i class="fas fa-tag"></i><span id="categoriesCount">0</span><span>категорий</span></div>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="map-area">
+                <div id="map"></div>
+                
+                <!-- ПАНЕЛЬ ИНФОРМАЦИИ -->
+                <div class="info-panel" id="infoPanel" style="display: none;">
+                    <div class="info-panel-header">
+                        <div class="info-panel-title">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Информация</span>
+                        </div>
+                        <button id="closeInfoPanelBtn" class="info-panel-close">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="info-panel-content" id="infoPanelContent">
+                        <div class="info-placeholder">
+                            <i class="fas fa-hand-pointer"></i>
+                            <p>Выберите объект или категорию</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="locate-btn" id="locateBtn"><i class="fas fa-location-dot"></i></button>
+            </main>
+        </div>
+
+        <div class="mobile-toolbar">
+            <button class="toolbar-btn" id="mobileListBtn"><i class="fas fa-list"></i><span>Список</span></button>
+            <button class="toolbar-btn" id="mobileCategoriesBtn"><i class="fas fa-tags"></i><span>Категории</span></button>
+            <button class="toolbar-btn" id="mobileLocateBtn"><i class="fas fa-location-dot"></i><span>Я здесь</span></button>
+            <button class="toolbar-btn" id="mobileClearBtn"><i class="fas fa-trash-alt"></i><span>Очистить</span></button>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
