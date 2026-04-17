@@ -1,6 +1,5 @@
 // ============================================================
 // Навигатор по Старому кладбищу Таганрога
-// С обновленными координатами входа
 // ============================================================
 
 // Глобальные переменные
@@ -12,7 +11,7 @@ let currentRouteLine = null;
 let currentYandexRoute = null;
 let currentSelectedPlacemark = null;
 
-// Координаты входа (ОБНОВЛЕНЫ)
+// Координаты входа (47°12'26.4"N 38°54'15.1"E)
 const ENTRANCE = {
     lat: 47.207333,
     lon: 38.904194,
@@ -205,7 +204,6 @@ function showObjectDetails(grave) {
     }, 50);
 }
 
-// Функция для открытия деталей из списка
 window.showFullInfo = function(id) {
     const grave = gravesData.find(g => g.id === id);
     if (grave) {
@@ -241,10 +239,6 @@ function buildHybridRoute(grave) {
     });
     myMap.geoObjects.add(currentRouteLine);
     
-    const lineDistance = calculateDistance(entrancePoint, gravePoint);
-    window.tempLineDistance = formatDistance(lineDistance);
-    window.tempLineDuration = formatDuration(lineDistance);
-    
     // Маршрут через Яндекс API
     try {
         const multiRoute = new ymaps.multiRouter.MultiRoute({
@@ -261,38 +255,31 @@ function buildHybridRoute(grave) {
         currentYandexRoute = multiRoute;
         
         multiRoute.model.events.once('success', () => {
-            const activeRoute = multiRoute.getActiveRoute();
-            if (activeRoute) {
-                const apiDistance = activeRoute.properties.get('distance')?.text || 'неизвестно';
-                const apiDuration = activeRoute.properties.get('duration')?.text || 'неизвестно';
-                showHybridRouteInfo(apiDistance, apiDuration, window.tempLineDistance, window.tempLineDuration, grave.name);
-            } else {
-                showHybridRouteInfo("неизвестно", "неизвестно", window.tempLineDistance, window.tempLineDuration, grave.name);
-            }
+            showHybridRouteInfo(grave.name);
         });
         
         multiRoute.model.events.once('error', () => {
-            showHybridRouteInfo("неизвестно", "неизвестно", window.tempLineDistance, window.tempLineDuration, grave.name);
+            showHybridRouteInfo(grave.name);
         });
     } catch (error) {
-        showHybridRouteInfo("неизвестно", "неизвестно", window.tempLineDistance, window.tempLineDuration, grave.name);
+        showHybridRouteInfo(grave.name);
     }
     
     const bounds = calculateBounds([userPoint, entrancePoint, gravePoint]);
     if (bounds) myMap.setBounds(bounds, { zoomMargin: 100 });
 }
 
-function showHybridRouteInfo(apiDistance, apiDuration, lineDistance, lineDuration, graveName) {
+function showHybridRouteInfo(graveName) {
     const html = `
         <div class="route-info">
             <div class="route-distance">🚶 Смешанный маршрут до "${graveName}"</div>
             <div style="margin: 12px 0; padding: 8px; background: #e3f2fd; border-radius: 12px;">
-                <strong>📍 Часть 1 (Яндекс Карты):</strong><br>
-                От вас до входа: ${apiDistance} · ⏱️ ${apiDuration}
+                <strong>📍 Часть 1:</strong><br>
+                От вашего местоположения до входа на кладбище
             </div>
             <div style="margin: 12px 0; padding: 8px; background: #fff3e0; border-radius: 12px;">
-                <strong>🚶 Часть 2 (Прямая линия):</strong><br>
-                От входа до "${graveName}": ${lineDistance} · ⏱️ ${lineDuration}
+                <strong>🚶 Часть 2:</strong><br>
+                От входа до "${graveName}"
             </div>
             <div class="object-actions">
                 <button class="btn-primary" id="clearRouteBtn">🗑 Очистить</button>
@@ -326,9 +313,28 @@ function buildRouteFromEntrance(grave) {
     });
     myMap.geoObjects.add(currentRouteLine);
     
-    const distance = calculateDistance(startPoint, endPoint);
-    showRouteInfo(formatDistance(distance), formatDuration(distance), "входа", grave.name);
+    showSimpleRouteInfo("входа", grave.name);
     myMap.setBounds(calculateBounds([startPoint, endPoint]), { zoomMargin: 100 });
+}
+
+function showSimpleRouteInfo(start, end) {
+    const html = `
+        <div class="route-info">
+            <p><strong>📍 Маршрут от ${start} до ${end}</strong></p>
+            <div class="object-actions">
+                <button class="btn-primary" id="clearRouteBtn">🗑 Очистить</button>
+                <button class="btn-secondary" id="closeRouteBtn">✕ Закрыть</button>
+            </div>
+        </div>
+    `;
+    showInfoPanel(html);
+    
+    setTimeout(() => {
+        const clearBtn = document.getElementById('clearRouteBtn');
+        const closeBtn = document.getElementById('closeRouteBtn');
+        if (clearBtn) clearBtn.onclick = () => clearAllData();
+        if (closeBtn) closeBtn.onclick = closeInfoPanel;
+    }, 50);
 }
 
 // ========== МАРШРУТ ПО КАТЕГОРИИ ОТ МОЕГО МЕСТОПОЛОЖЕНИЯ ==========
@@ -367,13 +373,6 @@ function buildCategoryRouteFromMyLocation(category, graves) {
     });
     myMap.geoObjects.add(currentRouteLine);
     
-    let totalDist = 0;
-    for (let i = 0; i < points.length - 1; i++) {
-        totalDist += calculateDistance(points[i], points[i + 1]);
-    }
-    const lineDistance = formatDistance(totalDist);
-    const lineDuration = formatDuration(totalDist);
-    
     const names = sorted.map(g => g.name);
     const namesText = names.length > 3 ? names.slice(0, 3).join(', ') + ` и еще ${names.length - 3}` : names.join(', ');
     
@@ -394,21 +393,14 @@ function buildCategoryRouteFromMyLocation(category, graves) {
         currentYandexRoute = multiRoute;
         
         multiRoute.model.events.once('success', () => {
-            const activeRoute = multiRoute.getActiveRoute();
-            if (activeRoute) {
-                const apiDistance = activeRoute.properties.get('distance')?.text || 'неизвестно';
-                const apiDuration = activeRoute.properties.get('duration')?.text || 'неизвестно';
-                showHybridCategoryRouteInfo(apiDistance, apiDuration, lineDistance, lineDuration, namesText, sorted.length);
-            } else {
-                showRouteInfo(lineDistance, lineDuration, "входа", namesText, true, category);
-            }
+            showCategoryRouteInfo(namesText, sorted.length, category);
         });
         
         multiRoute.model.events.once('error', () => {
-            showRouteInfo(lineDistance, lineDuration, "входа", namesText, true, category);
+            showCategoryRouteInfo(namesText, sorted.length, category);
         });
     } catch (error) {
-        showRouteInfo(lineDistance, lineDuration, "входа", namesText, true, category);
+        showCategoryRouteInfo(namesText, sorted.length, category);
     }
     
     const allPoints = [userPoint, entrancePoint, ...points.slice(1)];
@@ -416,18 +408,17 @@ function buildCategoryRouteFromMyLocation(category, graves) {
     if (bounds) myMap.setBounds(bounds, { zoomMargin: 100 });
 }
 
-function showHybridCategoryRouteInfo(apiDistance, apiDuration, lineDistance, lineDuration, destinations, count) {
+function showCategoryRouteInfo(destinations, count, category) {
     const html = `
         <div class="route-info">
-            <div class="route-distance">🚶 Гибридный маршрут (${count} объектов)</div>
+            <div class="route-distance">🚶 Маршрут по категории "${category}" (${count} объектов)</div>
             <div style="margin: 12px 0; padding: 8px; background: #e3f2fd; border-radius: 12px;">
                 <strong>📍 Часть 1:</strong><br>
-                От вас до входа: ${apiDistance} · ⏱️ ${apiDuration}
+                От вашего местоположения до входа на кладбище
             </div>
             <div style="margin: 12px 0; padding: 8px; background: #fff3e0; border-radius: 12px;">
                 <strong>🚶 Часть 2:</strong><br>
-                От входа до: ${destinations}<br>
-                Длина: ${lineDistance} · ⏱️ ${lineDuration}
+                От входа до объектов: ${destinations}
             </div>
             <div class="object-actions">
                 <button class="btn-primary" id="clearRouteBtn">🗑 Очистить</button>
@@ -475,18 +466,35 @@ function buildCategoryRouteFromEntrance(category, graves) {
     });
     myMap.geoObjects.add(currentRouteLine);
     
-    let totalDist = 0;
-    for (let i = 0; i < points.length - 1; i++) {
-        totalDist += calculateDistance(points[i], points[i + 1]);
-    }
-    
     const names = sorted.map(g => g.name);
     const namesText = names.length > 3 ? names.slice(0, 3).join(', ') + ` и еще ${names.length - 3}` : names.join(', ');
     
-    showRouteInfo(formatDistance(totalDist), formatDuration(totalDist), "входа", namesText, true, category);
+    showRouteFromEntranceInfo(namesText, sorted.length, category);
     
     const bounds = calculateBounds(points);
     if (bounds) myMap.setBounds(bounds, { zoomMargin: 100 });
+}
+
+function showRouteFromEntranceInfo(destinations, count, category) {
+    const html = `
+        <div class="route-info">
+            <div class="route-distance">🚶 Маршрут по категории "${category}" (${count} объектов)</div>
+            <p><strong>От:</strong> Вход на кладбище</p>
+            <p><strong>До:</strong> ${destinations}</p>
+            <div class="object-actions">
+                <button class="btn-primary" id="clearRouteBtn">🗑 Очистить</button>
+                <button class="btn-secondary" id="closeRouteBtn">✕ Закрыть</button>
+            </div>
+        </div>
+    `;
+    showInfoPanel(html);
+    
+    setTimeout(() => {
+        const clearBtn = document.getElementById('clearRouteBtn');
+        const closeBtn = document.getElementById('closeRouteBtn');
+        if (clearBtn) clearBtn.onclick = () => clearAllData();
+        if (closeBtn) closeBtn.onclick = closeInfoPanel;
+    }, 50);
 }
 
 // ========== ПОКАЗ МЕТОК КАТЕГОРИИ ==========
@@ -547,29 +555,6 @@ function showInfoPanel(content) {
 function closeInfoPanel() {
     const panel = document.getElementById('infoPanel');
     if (panel) panel.style.display = 'none';
-}
-
-function showRouteInfo(distance, duration, start, end, isCategory = false, category = "") {
-    const html = `
-        <div class="route-info">
-            <div class="route-distance">🚶 ${distance} · ⏱️ ${duration}</div>
-            ${isCategory 
-                ? `<p><strong>📍 Маршрут по категории "${category}"</strong></p><p><strong>От:</strong> ${start}</p><p><strong>До:</strong> ${end}</p>`
-                : `<p><strong>📍 Маршрут от ${start} до ${end}</strong></p>`}
-            <div class="object-actions">
-                <button class="btn-primary" id="clearRouteBtn">🗑 Очистить</button>
-                <button class="btn-secondary" id="closeRouteBtn">✕ Закрыть</button>
-            </div>
-        </div>
-    `;
-    showInfoPanel(html);
-    
-    setTimeout(() => {
-        const clearBtn = document.getElementById('clearRouteBtn');
-        const closeBtn = document.getElementById('closeRouteBtn');
-        if (clearBtn) clearBtn.onclick = () => clearAllData();
-        if (closeBtn) closeBtn.onclick = closeInfoPanel;
-    }, 50);
 }
 
 function showCategoryInfo(category, graves) {
